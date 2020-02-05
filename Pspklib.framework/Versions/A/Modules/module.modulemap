@@ -1,0 +1,9 @@
+framework module "Pspklib" {
+	header "ref.h"
+    header "Pspklib.objc.h"
+    header "Pspk.objc.h"
+    header "Universe.objc.h"
+    header "Pspklib.h"
+
+    export *
+}
