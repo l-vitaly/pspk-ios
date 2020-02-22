@@ -121,12 +121,52 @@ func (p *Pspk) HKDF(secret []byte, outputLen int) ([]byte, error) {
 	return out, nil
 }
 
+func (p *Pspk) EphemeralEncrypt(pub, data []byte) ([]byte, error) {
+	if len(pub) != 32 {
+		return nil, errors.New("public key must be 32 bytes length")
+	}
+	pubEphemeral, privEphemeral, err := keys.GenerateDH()
+	if err != nil {
+		return nil, err
+	}
+	chain := keys.Secret(privEphemeral[:], pub)
+	messageKey, err := keys.LoadMaterialKey(chain)
+	if err != nil {
+		return nil, err
+	}
+	b, err := utils.Encrypt(messageKey[64:], messageKey[:32], data)
+	if err != nil {
+		return nil, err
+	}
+	return append(pubEphemeral[:], b...), nil
+}
+
 func (p *Pspk) Encrypt(key, plaintext []byte) ([]byte, error) {
 	out, err := utils.Encrypt(key[64:], key[:32], plaintext)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
+}
+
+func (p *Pspk) EphemeralDecrypt(priv, data []byte) ([]byte, error) {
+	if len(priv) != 32 {
+		return nil, errors.New("private key must be 32 bytes length")
+	}
+	if len(data) <= 32 {
+		return nil, errors.New("data is not ephemeral encrypt")
+	}
+
+	chain := keys.Secret(priv, data[:32])
+	dataKey, err := keys.LoadMaterialKey(chain)
+	if err != nil {
+		return nil, err
+	}
+	result, err := utils.Decrypt(dataKey[64:], dataKey[:32], data[32:])
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
 }
 
 func (p *Pspk) Decrypt(key, cipherText []byte) ([]byte, error) {

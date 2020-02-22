@@ -85,6 +85,8 @@
 - (nullable instancetype)init;
 - (NSData* _Nullable)decrypt:(NSData* _Nullable)key cipherText:(NSData* _Nullable)cipherText error:(NSError* _Nullable* _Nullable)error;
 - (NSData* _Nullable)encrypt:(NSData* _Nullable)key plaintext:(NSData* _Nullable)plaintext error:(NSError* _Nullable* _Nullable)error;
+- (NSData* _Nullable)ephemeralDecrypt:(NSData* _Nullable)priv data:(NSData* _Nullable)data error:(NSError* _Nullable* _Nullable)error;
+- (NSData* _Nullable)ephemeralEncrypt:(NSData* _Nullable)pub data:(NSData* _Nullable)data error:(NSError* _Nullable* _Nullable)error;
 - (PspklibGenerateDHResult* _Nullable)generateDH:(NSError* _Nullable* _Nullable)error;
 - (NSData* _Nullable)hkdf:(NSData* _Nullable)secret outputLen:(long)outputLen error:(NSError* _Nullable* _Nullable)error;
 - (NSData* _Nullable)loadMaterialKey:(NSData* _Nullable)chain error:(NSError* _Nullable* _Nullable)error;
